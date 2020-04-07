@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Navigation({ onRouteChange, isSignedIn }) {
+export default function Navigation({ onRouteChange, isSignedIn, user }) {
   if (isSignedIn) {
     return (
       <nav style={{ display: 'flex', justifyContent: 'flex-end' }}>

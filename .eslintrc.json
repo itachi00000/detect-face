@@ -26,6 +26,7 @@
     // React
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
-    "class-methods-use-this": "warn"
+    "class-methods-use-this": "warn",
+    "object-shorthand": "warn"
   }
 }

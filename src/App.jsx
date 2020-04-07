@@ -15,7 +15,7 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
 
-// API keys
+// Clarifai API keys
 const app = new Clarifai.App({
   apiKey: '92ce543b81be4d81bfa5dce8a79b9c1d'
 });
@@ -33,19 +33,31 @@ const particlesOptions = {
   }
 };
 
-class App extends React.Component {
+// initial state
+const inititalState = {
+  input: '',
+  imageUrl: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+};
+
+export default class App extends React.Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false
-    };
+    this.state = inititalState;
+
     this.onInputChange = this.onInputChange.bind(this);
     this.onButtonSubmit = this.onButtonSubmit.bind(this);
     this.onRouteChange = this.onRouteChange.bind(this);
+    this.loadUser = this.loadUser.bind(this);
   }
 
   onInputChange(e) {
@@ -53,25 +65,41 @@ class App extends React.Component {
     this.setState({ [name]: value });
   }
 
+  // change to onPictureSubmit ??
   onButtonSubmit() {
-    const { input } = this.state;
-    this.setState(prevState => ({ imageUrl: prevState.input }));
+    const { input, user } = this.state;
+
+    this.setState({ imageUrl: input });
 
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, input)
-      .then(response =>
-        this.displayFaceBox(this.calculateFaceLocation(response))
-      )
-      .catch(err => console.log(err));
+      .then(response => {
+        if (response) {
+          fetch('http://localhost:3000/image', {
+            method: 'put',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: user.id
+            })
+          })
+            .then(resp => resp.json())
+            .then(count => {
+              this.setState({ user: { ...user, entries: count } });
+            })
+            .catch(() => console.log('error at clarifai fetcing'));
+        }
+        this.displayFaceBox(this.calculateFaceLocation(response));
+      })
+      .catch(() => console.log('Error at Clarifai'));
   }
 
   onRouteChange(route) {
     if (route === 'signout') {
-      this.setState({ isSignedIn: false });
+      this.setState(inititalState);
     } else if (route === 'home') {
       this.setState({ isSignedIn: true });
     }
-    this.setState({ route });
+    this.setState({ route: route });
   }
 
   calculateFaceLocation(data) {
@@ -90,23 +118,39 @@ class App extends React.Component {
   }
 
   displayFaceBox(box) {
-    this.setState({ box });
+    this.setState({ box: box });
+  }
+
+  loadUser(data) {
+    const { user } = this.state;
+
+    this.setState({
+      user: {
+        ...user,
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined: data.joined
+      }
+    });
   }
 
   render() {
-    const { imageUrl, box, route, isSignedIn } = this.state;
+    const { imageUrl, box, route, isSignedIn, user } = this.state;
 
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
         <Navigation
+          user={user}
           onRouteChange={this.onRouteChange}
           isSignedIn={isSignedIn}
         />
         {route === 'home' ? (
           <>
             <Logo />
-            <Rank />
+            <Rank entries={user.entries} name={user.name} />
             <ImageLinkForm
               onButtonSubmit={this.onButtonSubmit}
               onInputChange={this.onInputChange}
@@ -114,13 +158,14 @@ class App extends React.Component {
             <FaceRecognition box={box} imageUrl={imageUrl} />
           </>
         ) : route === 'register' ? (
-          <Register onRouteChange={this.onRouteChange} />
+          <Register
+            loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange}
+          />
         ) : (
-          <Signin onRouteChange={this.onRouteChange} />
+          <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
         )}
       </div>
     );
   }
 }
-
-export default App;
