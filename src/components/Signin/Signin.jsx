@@ -1,5 +1,10 @@
 import React from 'react';
 
+import { getServerUrl } from '../../server-url';
+
+const SERVER_URL_STRING = getServerUrl();
+
+// main
 export default class Signin extends React.Component {
   constructor(props) {
     super(props);
@@ -25,7 +30,7 @@ export default class Signin extends React.Component {
     const { loadUser, onRouteChange } = this.props;
     const { signInEmail, signInPassword } = this.state;
 
-    fetch('http://localhost:3000/signin', {
+    fetch(`${SERVER_URL_STRING}/signin`, {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -58,28 +63,28 @@ export default class Signin extends React.Component {
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="email-address">
                   Email
+                  <input
+                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    type="email"
+                    name="email-address"
+                    id="email-address"
+                    onChange={this.onEmailChange}
+                    value={signInEmail}
+                  />
                 </label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="email"
-                  name="email-address"
-                  id="email-address"
-                  onChange={this.onEmailChange}
-                  value={signInEmail}
-                />
               </div>
               <div className="mv3">
                 <label className="db fw6 lh-copy f6" htmlFor="password">
                   Password
+                  <input
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    type="password"
+                    name="password"
+                    id="password"
+                    onChange={this.onPasswordChange}
+                    value={signInPassword}
+                  />
                 </label>
-                <input
-                  className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="password"
-                  name="password"
-                  id="password"
-                  onChange={this.onPasswordChange}
-                  value={signInPassword}
-                />
               </div>
             </fieldset>
             <div className="">
@@ -92,6 +97,7 @@ export default class Signin extends React.Component {
             </div>
             <div className="lh-copy mt3">
               <p
+                role="presentation"
                 onClick={() => onRouteChange('register')}
                 className="f6 link dim black db pointer"
               >

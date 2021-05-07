@@ -1,5 +1,10 @@
 import React from 'react';
 
+import { getServerUrl } from '../../server-url';
+
+const SERVER_URL_STRING = getServerUrl();
+
+// main
 export default class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -30,16 +35,18 @@ export default class Register extends React.Component {
   onSubmitSignIn() {
     const { loadUser, onRouteChange } = this.props;
     const { name, email, password } = this.state;
-    fetch('http://localhost:3000/register', {
+
+    fetch(`${SERVER_URL_STRING}/register`, {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: email,
-        password: password,
-        name: name
+        email,
+        password,
+        name
       })
     })
       .then(resp => {
+        console.log(resp);
         if (!resp.ok) {
           throw Error(resp.statusText);
         }
@@ -64,41 +71,41 @@ export default class Register extends React.Component {
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="name">
                   Name
+                  <input
+                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    type="text"
+                    name="name"
+                    id="name"
+                    onChange={this.onNameChange}
+                    value={name}
+                  />
                 </label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="text"
-                  name="name"
-                  id="name"
-                  onChange={this.onNameChange}
-                  value={name}
-                />
               </div>
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="email-address">
                   Email
+                  <input
+                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    type="email"
+                    name="email-address"
+                    id="email-address"
+                    onChange={this.onEmailChange}
+                    value={email}
+                  />
                 </label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="email"
-                  name="email-address"
-                  id="email-address"
-                  onChange={this.onEmailChange}
-                  value={email}
-                />
               </div>
               <div className="mv3">
                 <label className="db fw6 lh-copy f6" htmlFor="password">
                   Password
+                  <input
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    type="password"
+                    name="password"
+                    id="password"
+                    onChange={this.onPasswordChange}
+                    value={password}
+                  />
                 </label>
-                <input
-                  className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="password"
-                  name="password"
-                  id="password"
-                  onChange={this.onPasswordChange}
-                  value={password}
-                />
               </div>
             </fieldset>
             <div className="">
