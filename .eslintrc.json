@@ -17,13 +17,16 @@
     "prettier/prettier": [
       "warn",
       {
-        "singleQuote": true
+        // for visual
+        "singleQuote": true,
+        "arrowParens": "always"
       }
     ],
     "no-console": "off",
     "no-alert": "off",
     "no-unused-vars": "warn",
     // React
+    "react/no-unused-state": "warn",
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
     "class-methods-use-this": "warn",

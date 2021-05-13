@@ -45,18 +45,18 @@ export default class Register extends React.Component {
         name
       })
     })
-      .then(resp => {
+      .then((resp) => {
         console.log(resp);
         if (!resp.ok) {
           throw Error(resp.statusText);
         }
         return resp.json();
       })
-      .then(data => {
+      .then((data) => {
         loadUser(data);
         onRouteChange('home');
       })
-      .catch(err => console.log('Error at Register.jsx ,,', err));
+      .catch((err) => console.log('Error at Register.jsx ,,', err));
   }
 
   render() {
