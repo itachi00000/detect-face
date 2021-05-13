@@ -1,6 +1,6 @@
 {
   "name": "detect-face-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "homepage": "https://itachi00000.github.io/detect-face",
   "private": true,
   "dependencies": {
