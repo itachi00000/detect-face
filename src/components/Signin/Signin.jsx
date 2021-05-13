@@ -1,8 +1,11 @@
 import React from 'react';
 
 import { getServerUrl } from '../../server-url';
+import './Signin.css';
 
 const SERVER_URL_STRING = getServerUrl();
+
+//
 
 // main
 export default class Signin extends React.Component {
@@ -16,7 +19,10 @@ export default class Signin extends React.Component {
     this.onEmailChange = this.onEmailChange.bind(this);
     this.onPasswordChange = this.onPasswordChange.bind(this);
     this.onSubmitSignIn = this.onSubmitSignIn.bind(this);
+    this.saveAuthTokenInSession = this.saveAuthTokenInSession.bind(this);
   }
+
+  // static getDerivedStateFromProps() {}
 
   onEmailChange(event) {
     this.setState({ signInEmail: event.target.value });
@@ -27,6 +33,7 @@ export default class Signin extends React.Component {
   }
 
   onSubmitSignIn() {
+    const { props, state } = this;
     const { loadUser, onRouteChange } = this.props;
     const { signInEmail, signInPassword } = this.state;
 
@@ -34,21 +41,44 @@ export default class Signin extends React.Component {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: signInEmail,
-        password: signInPassword
+        email: state.signInEmail,
+        password: state.signInPassword
       })
     })
-      .then(resp => {
-        if (!resp.ok) {
-          throw Error(resp.statusText);
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (data.userId && data.success === true) {
+          console.log('data', data);
+          this.saveAuthTokenInSession(data.token);
+
+          fetch(`${SERVER_URL_STRING}/profile/${data.userId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: data.token
+            }
+          })
+            .then((resp) => resp.json())
+            .then((user) => {
+              if (user && user.email) {
+                props.loadUser(user);
+                props.onRouteChange('home');
+              }
+            })
+            .catch((err) => console.error('mount, GET @ profile/1 :', err));
         }
-        return resp.json();
       })
-      .then(data => {
-        loadUser(data);
-        onRouteChange('home');
-      })
-      .catch(err => console.log('Error at Signin Comp. ,,', err));
+      .catch((err) => console.log('signin-error', err));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  saveAuthTokenInSession(token) {
+    if (window.sessionStorage) {
+      // for one tab only
+      window.sessionStorage.setItem('jwt', token);
+
+      // OR window.localStorage.setItem('jwt', token)
+    }
   }
 
   render() {
@@ -64,7 +94,7 @@ export default class Signin extends React.Component {
                 <label className="db fw6 lh-copy f6" htmlFor="email-address">
                   Email
                   <input
-                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white hover-black2 w-100"
                     type="email"
                     name="email-address"
                     id="email-address"
@@ -77,7 +107,7 @@ export default class Signin extends React.Component {
                 <label className="db fw6 lh-copy f6" htmlFor="password">
                   Password
                   <input
-                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white hover-black2 w-100"
                     type="password"
                     name="password"
                     id="password"
