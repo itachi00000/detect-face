@@ -55,7 +55,7 @@ export default class Signin extends React.Component {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: data.token
+              Authorization: `Bearer ${data.token}`
             }
           })
             .then((resp) => resp.json())

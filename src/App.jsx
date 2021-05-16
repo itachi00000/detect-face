@@ -144,7 +144,8 @@ export default class App extends React.Component {
               Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-              id: user.id
+              id: user.id,
+              email: user.email
             })
           })
             .then((resp) => resp.json())
@@ -166,6 +167,7 @@ export default class App extends React.Component {
     // if signout, reset state
     if (route === 'signout') {
       // return, bcoz it changes route
+      window.sessionStorage.removeItem('jwt');
       return this.setState(inititalState);
     }
 

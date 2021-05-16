@@ -16,7 +16,7 @@ export default class ProfileIcon extends React.Component {
       dropDownOpen: false
     };
     this.toggle = this.toggle.bind(this);
-    this.handleSignout = this.handleSignout.bind(this);
+    // this.handleSignout = this.handleSignout.bind(this);
   }
 
   toggle() {
@@ -25,12 +25,12 @@ export default class ProfileIcon extends React.Component {
     }));
   }
 
-  handleSignout() {
-    const { history } = this.props;
-    console.log(this.props);
-    console.log(history);
-    console.log('signout');
-  }
+  // handleSignout() {
+  //   const { history } = this.props;
+  //   console.log(this.props);
+  //   console.log(history);
+  //   console.log('signout');
+  // }
 
   render() {
     const { dropDownOpen } = this.state;
@@ -44,7 +44,11 @@ export default class ProfileIcon extends React.Component {
             data-toggle="dropdown"
             aria-expanded={dropDownOpen}
           >
-            <img src={tachLogo} className="br-100 ba h3 w3 dib" alt="avatar" />
+            <img
+              src="http://tachyons.io/img/logo.jpg"
+              className="br-100 ba h3 w3 dib"
+              alt="avatar"
+            />
           </DropdownToggle>
           <DropdownMenu
             className="b--transparent shadow-5"
