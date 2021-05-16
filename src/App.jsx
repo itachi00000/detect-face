@@ -77,7 +77,7 @@ export default class App extends React.Component {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` // stndrd: 'Bearer token'
+          Authorization: `Bearer ${token}`
         }
       })
         .then((resp) => resp.json())
@@ -102,6 +102,7 @@ export default class App extends React.Component {
                 console.error('mount, GET @ profile/1 :', err);
               });
           }
+          return console.err;
         })
         .catch((err) => {
           console.error('mount, GET @ signin :', err);

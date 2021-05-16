@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 import { getServerUrl } from '../../server-url';
 import './Signin.css';
@@ -37,7 +38,7 @@ export default class Signin extends React.Component {
     const { loadUser, onRouteChange } = this.props;
     const { signInEmail, signInPassword } = this.state;
 
-    fetch(`${SERVER_URL_STRING}/signin`, {
+    return fetch(`${SERVER_URL_STRING}/signin`, {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -51,22 +52,70 @@ export default class Signin extends React.Component {
           console.log('data', data);
           this.saveAuthTokenInSession(data.token);
 
-          fetch(`${SERVER_URL_STRING}/profile/${data.userId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${data.token}`
-            }
-          })
-            .then((resp) => resp.json())
-            .then((user) => {
+          // return fetch(`${SERVER_URL_STRING}/profile/${data.userId}`, {
+          //   method: 'GET',
+          //   headers: {
+          //     'Content-Type': 'application/json'
+          //   }
+          // })
+
+          return axios
+            .get(`${SERVER_URL_STRING}/profile/${data.userId}`, {
+              headers: {
+                authorization: `Bearer ${data.token}`
+              }
+            })
+            .then((resp) => {
+              const { user } = resp.data;
+
               if (user && user.email) {
                 props.loadUser(user);
                 props.onRouteChange('home');
               }
             })
-            .catch((err) => console.error('mount, GET @ profile/1 :', err));
+            .catch((error) => {
+              // getting error message
+              // ex. let errorMsg = ''
+
+              console.log(error); // this is wrong
+              if (error.response) {
+                // The request was made and
+                // client receivied an error response (5xx, 4xx)
+
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+
+                // const { data, status, headers } = error.response;
+
+                // ex. errorMsg = data.error || data.genError.errorMsg
+              } else if (error.request) {
+                // client never received a response,
+                // or request never left (network error)
+                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                // http.ClientRequest in node.js
+                console.log(error.request);
+
+                // ex. errorMsg = error.message
+                // OR ex. errorMsg = `${error.name}: ${error.message}`
+              } else {
+                // anything else
+                console.log('Error', error.message);
+              }
+              // console.log('error config ----')
+              // console.log(error.config);
+              console.log('errorObj: -----');
+              console.dir(error);
+              // OR;
+              console.error(error);
+              // OR;
+              console.error(JSON.stringify(error, null, 2));
+
+              // ex. return setValue({ error: errorMsg, loading: false })
+            });
         }
+
+        throw Error('no userid-signin');
       })
       .catch((err) => console.log('signin-error', err));
   }
