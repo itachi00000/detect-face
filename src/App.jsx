@@ -39,8 +39,8 @@ const inititalState = {
   input: '',
   imageUrl: '',
   box: {},
-  route: 'signin', // signin
-  isSignedIn: false, // false,
+  route: 'signin',
+  isSignedIn: false,
   isProfileOpen: false,
   user: {
     id: '',
@@ -65,7 +65,6 @@ export default class App extends React.Component {
     this.onRouteChange = this.onRouteChange.bind(this);
     this.loadUser = this.loadUser.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
-    // this.onSavedUserDataClick = this.onSavedUserDataClick.bind(this);
   }
 
   componentDidMount() {
@@ -84,7 +83,8 @@ export default class App extends React.Component {
         .then((data) => {
           if (data && data.id) {
             // fetchById
-            fetch(`${SERVER_URL_STRING}/profile/${data.id}`, {
+            console.log('user', data);
+            return fetch(`${SERVER_URL_STRING}/profile/${data.id}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -99,10 +99,10 @@ export default class App extends React.Component {
                 }
               })
               .catch((err) => {
-                console.error('mount, GET @ profile/1 :', err);
+                console.error(err);
               });
           }
-          return console.err;
+          throw Error('no user at signin-mount');
         })
         .catch((err) => {
           console.error('mount, GET @ signin :', err);

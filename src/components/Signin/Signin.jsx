@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 
 import { getServerUrl } from '../../server-url';
 import './Signin.css';
@@ -35,11 +34,9 @@ export default class Signin extends React.Component {
 
   onSubmitSignIn() {
     const { props, state } = this;
-    const { loadUser, onRouteChange } = this.props;
-    const { signInEmail, signInPassword } = this.state;
 
     return fetch(`${SERVER_URL_STRING}/signin`, {
-      method: 'post',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: state.signInEmail,
@@ -52,67 +49,22 @@ export default class Signin extends React.Component {
           console.log('data', data);
           this.saveAuthTokenInSession(data.token);
 
-          // return fetch(`${SERVER_URL_STRING}/profile/${data.userId}`, {
-          //   method: 'GET',
-          //   headers: {
-          //     'Content-Type': 'application/json'
-          //   }
-          // })
-
-          return axios
-            .get(`${SERVER_URL_STRING}/profile/${data.userId}`, {
-              headers: {
-                authorization: `Bearer ${data.token}`
-              }
-            })
-            .then((resp) => {
-              const { user } = resp.data;
-
+          return fetch(`${SERVER_URL_STRING}/profile/${data.userId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${data.token}`
+            }
+          })
+            .then((resp) => resp.json())
+            .then((user) => {
+              console.log('resp-user', user);
               if (user && user.email) {
                 props.loadUser(user);
                 props.onRouteChange('home');
               }
             })
-            .catch((error) => {
-              // getting error message
-              // ex. let errorMsg = ''
-
-              console.log(error); // this is wrong
-              if (error.response) {
-                // The request was made and
-                // client receivied an error response (5xx, 4xx)
-
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-
-                // const { data, status, headers } = error.response;
-
-                // ex. errorMsg = data.error || data.genError.errorMsg
-              } else if (error.request) {
-                // client never received a response,
-                // or request never left (network error)
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                console.log(error.request);
-
-                // ex. errorMsg = error.message
-                // OR ex. errorMsg = `${error.name}: ${error.message}`
-              } else {
-                // anything else
-                console.log('Error', error.message);
-              }
-              // console.log('error config ----')
-              // console.log(error.config);
-              console.log('errorObj: -----');
-              console.dir(error);
-              // OR;
-              console.error(error);
-              // OR;
-              console.error(JSON.stringify(error, null, 2));
-
-              // ex. return setValue({ error: errorMsg, loading: false })
-            });
+            .catch((error) => console.error('error-fetch-profile', error));
         }
 
         throw Error('no userid-signin');
@@ -138,7 +90,7 @@ export default class Signin extends React.Component {
         <main className="pa4 black-80">
           <div className="measure">
             <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-              <legend className="f1 fw6 ph0 mh0">Sign In</legend>
+              <legend className="f1 fw6 ph0 mh0">Sign In Edited</legend>
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="email-address">
                   Email
