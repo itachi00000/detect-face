@@ -5,7 +5,7 @@ import TachLogo from './tachyons-logo.jpg';
 import './Profile.css';
 
 //
-import { getServerUrl } from '../../server-url';
+import { getServerUrl } from '../../utils/server-url';
 
 const SERVER_URL_STRING = getServerUrl();
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getServerUrl } from '../../server-url';
+import { getServerUrl } from '../../utils/server-url';
 
 const SERVER_URL_STRING = getServerUrl();
 
@@ -56,7 +56,7 @@ export default class Register extends React.Component {
         loadUser(data);
         onRouteChange('home');
       })
-      .catch((err) => console.log('Error at Register.jsx ,,', err));
+      .catch((err) => console.log('Error at Register.jsx', err));
   }
 
   render() {

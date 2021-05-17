@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { getServerUrl } from '../../server-url';
+import { getServerUrl } from '../../utils/server-url';
+import { fetchProfile } from '../../utils/fetch-profile.utils';
 import './Signin.css';
 
 const SERVER_URL_STRING = getServerUrl();
@@ -49,25 +50,10 @@ export default class Signin extends React.Component {
           console.log('data', data);
           this.saveAuthTokenInSession(data.token);
 
-          return fetch(`${SERVER_URL_STRING}/profile/${data.userId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${data.token}`
-            }
-          })
-            .then((resp) => resp.json())
-            .then((user) => {
-              console.log('resp-user', user);
-              if (user && user.email) {
-                props.loadUser(user);
-                props.onRouteChange('home');
-              }
-            })
-            .catch((error) => console.error('error-fetch-profile', error));
+          fetchProfile({ data, ev: props });
         }
 
-        throw Error('no userid-signin');
+        // throw Error('no userid-signin');
       })
       .catch((err) => console.log('signin-error', err));
   }

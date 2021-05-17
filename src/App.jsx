@@ -14,7 +14,8 @@ import Modal from './components/Modal/Modal';
 import Profile from './components/Profile/Profile';
 
 //
-import { getServerUrl } from './server-url';
+import { fetchProfile } from './utils/fetch-profile.utils';
+import { getServerUrl } from './utils/server-url';
 
 // css
 import './App.css';
@@ -84,25 +85,14 @@ export default class App extends React.Component {
           if (data && data.id) {
             // fetchById
             console.log('user', data);
-            return fetch(`${SERVER_URL_STRING}/profile/${data.id}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-              }
-            })
-              .then((resp) => resp.json())
-              .then((user) => {
-                if (user && user.email) {
-                  this.loadUser(user);
-                  this.onRouteChange('home');
-                }
-              })
-              .catch((err) => {
-                console.error(err);
-              });
+
+            // fetch profile
+            fetchProfile({
+              data: { ...data, token },
+              ev: this
+            });
           }
-          throw Error('no user at signin-mount');
+          // throw Error('no user at signin-mount');
         })
         .catch((err) => {
           console.error('mount, GET @ signin :', err);
